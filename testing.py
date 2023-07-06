@@ -7,6 +7,7 @@ import importlib
 import requests_cache
 import yfinance as yf
 import pandas as pd
+import numpy as np
 
 from application.app import database
 #from application.app import strategies
@@ -20,6 +21,8 @@ print(te-ts, 'seconds to load db')
 
 # errors
 #df = yf.download('AAPL', period='max', interval='1d', group_by='ticker', threads=True)
+# load new data
+'''
 symbols = db.get_symbols_list()
 symbols_yf = ' '.join(symbols)
 df = yf.download(
@@ -29,7 +32,9 @@ df = yf.download(
     group_by='ticker',
     threads=False,
 )
+'''
 
+# load module via importlib
 '''
 strategy = 'breakout'
 strategy_module = importlib.import_module(f'strategy_files.{strategy}')
@@ -41,3 +46,6 @@ picks = toolbox.find_todays_breakout(
     days=strategy_module.days_to_backtest,
 )
 '''
+
+
+df = db.load_data()
