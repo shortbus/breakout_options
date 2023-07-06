@@ -58,7 +58,7 @@ Entry and exit prices are only calculated for overnight holds, although the tren
 
 This algorithm catches the trend reversal of Relative Strength Index indicator in attempt to ride the directional trend of a stock.
 
-When a trend reverses from "Oversol" a Call may be placed until the indicator reverses in the opposite direction ("Overbought").
+When a trend reverses from "Oversold" a Call may be placed until the indicator reverses in the opposite direction ("Overbought").
 
 Entry and exit prices are only calculated for overnight holds, although the trend may continue for longer.
 
