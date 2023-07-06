@@ -54,6 +54,14 @@ This algorithm catches the trend a day or two before, in an attempt to ride the 
 
 Entry and exit prices are only calculated for overnight holds, although the trend may continue for longer.
 
+### Stochastic RSI Reversal
+
+This algorithm catches the trend reversal of Relative Strength Index indicator in attempt to ride the directional trend of a stock.
+
+When a trend reverses from "Oversol" a Call may be placed until the indicator reverses in the opposite direction ("Overbought").
+
+Entry and exit prices are only calculated for overnight holds, although the trend may continue for longer.
+
 ## Getting Started
 
 Runs with optimal performance on systems with more than 8GB of RAM.
