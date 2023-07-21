@@ -47,5 +47,12 @@ picks = toolbox.find_todays_breakout(
 )
 '''
 
+ref = 'SPY'
+t = yf.Ticker(ref)
+spy = t.history(period='100y', interval='1d')
+
+spycopy = spy.copy()
+spy_adx = spycopy.ta.adx()
+spy_rsi = spycopy.ta.stochrsi()
 
 df = db.load_data()

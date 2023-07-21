@@ -50,12 +50,29 @@ class Database:
         html = requests.get('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
         soup = bs(html.text, 'lxml')
         table = soup.find('table', {'class': 'wikitable sortable'})
-        output = []
+        output = {}
         for row in table.findAll('tr')[1:]:
-                ticker = row.findAll('td')[0].text
+                td = row.findAll('td')
+                ticker = td[0].text
+                name = td[1].text
+                sector = td[2].text
+                sub_industry = td[3].text
+                hq = td[4].text
+                added = td[5].text
+                cik = td[6].text
+                founded = td[7].text
                 ticker = ticker[:-1]
                 ticker = ticker.replace('.', '-')
-                output.append(ticker)
+                output[ticker] = {
+                    'symbol': ticker,
+                    'security': name,
+                    'sector': sector,
+                    'industry': sub_industry,
+                    'hq': hq,
+                    'added': added,
+                    'cik': cik,
+                    'founded': founded,
+                }
         with open(full_path, 'w') as f:
             f.write(
                 json.dumps(
