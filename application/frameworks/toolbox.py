@@ -1,4 +1,5 @@
 print(__name__)
+import mibian
 import yfinance as yf
 import pandas as pd
 import pandas_ta as ta
@@ -130,6 +131,10 @@ def get_pricing(symbol, pick_type, gain):
         msg = {
             'date': exp,
             'strike': 'n/a',
+            'iv': 'n/a',
+            'delta': 'n/a',
+            'gamma': 'n/a',
+            'theta': 'n/a',
             'gain_percent': 'n/a',
             'buy_price': 'n/a',
             'sell_price': 'n/a',
@@ -176,8 +181,38 @@ def get_pricing(symbol, pick_type, gain):
             #output.append(msg)
             #continue
         price = float(nearest_strike.lastPrice.iloc[-1])
+        dte = (datetime.strptime(exp, '%Y-%m-%d') - now).days
+        print(s.__repr__(), type(s), nearest.__repr__(), type(nearest), dte.__repr__(), type(dte))
+        if pick_type == 'call':
+            bso_iv = mibian.BS([
+                s,
+                float(nearest),
+                0,
+                dte,
+            ], callPrice=price)
+        else:
+            bso_iv = mibian.BS([
+                s,
+                float(nearest),
+                0,
+                dte,
+            ], putPrice=price)
+        iv = bso_iv.impliedVolatility
+        msg['iv'] = f'{iv:.2f}'
+        bso = mibian.BS([
+            s,
+            float(nearest),
+            0,
+            dte,
+        ], volatility=iv)
+        delta = bso.__dict__.get(f'{pick_type}Delta')
+        gamma = bso.gamma
+        theta = bso.__dict__.get(f'{pick_type}Theta')
+        msg['delta'] = f'{delta:.2f}'
+        msg['gamma'] = f'{gamma:.2f}'
+        msg['theta'] = f'{theta:.2f}'
         # assumed delta of ATM
-        delta = 0.5
+        #delta = 0.5
         contract_gain = delta * (anticipated_gain / 1)
         anticipated_total = price + contract_gain
         percent_gain = float((abs(anticipated_total - price) / price) * 100)
