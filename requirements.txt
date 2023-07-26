@@ -38,6 +38,7 @@ python-dotenv==1.0.0
 pytz==2023.3
 requests==2.29.0
 requests-cache==1.0.1
+scipy==1.11.1
 six==1.16.0
 soupsieve==2.4.1
 tables==3.8.0
