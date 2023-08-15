@@ -5,6 +5,20 @@ import pandas as pd
 import pandas_ta as ta
 from datetime import datetime
 
+rsi_params = {
+    'length': 13,
+    'rsi_length': 21,
+    'k': 8,
+    'd': 8,
+}
+rsi_column_name = (
+    f'STOCHRSId'
+    f'_{rsi_params["length"]}'
+    f'_{rsi_params["rsi_length"]}'
+    f'_{rsi_params["k"]}'
+    f'_{rsi_params["d"]}'
+)
+
 def run_backtest(db, results, days=1):
     now = datetime.now()
     today = now.strftime('%Y-%m-%d')
@@ -47,6 +61,8 @@ def run_backtest(db, results, days=1):
     return message_dict
 
 def find_todays_breakout(db, fn, days=1):
+    global rsi_params
+    global rsi_column_name
     results = fn(db)
     symbols = results.columns.get_level_values(0).unique().sort_values(ascending=True)
     now = datetime.now()
@@ -67,12 +83,12 @@ def find_todays_breakout(db, fn, days=1):
         strike_float = float(data_copy['Close'].iloc[-1])
         strike = f'{strike_float:.02f}'
         adx = data_copy.ta.adx()
-        stochrsi = data_copy.ta.stochrsi()
+        stochrsi = data_copy.ta.stochrsi(**rsi_params)
         adx_uptrend = (adx.tail(1)['ADX_14'] > adx.shift(1).tail(1)['ADX_14']).bool()
         adx_uptrend_readable = 'Up' if adx_uptrend else 'Down'
         dmi_uptrend = (adx.tail(1)['DMP_14'] > adx.tail(1)['DMN_14']).bool()
         dmi_uptrend_readable = 'Up' if dmi_uptrend else 'Down'
-        rsi_uptrend = (stochrsi.tail(1)['STOCHRSId_14_14_3_3'] > stochrsi.shift(1)['STOCHRSId_14_14_3_3'].tail(1)).bool()
+        rsi_uptrend = (stochrsi.tail(1)[rsi_column_name] > stochrsi.shift(1)[rsi_column_name].tail(1)).bool()
         rsi_uptrend_readable = 'Up' if rsi_uptrend else 'Down'
         pick = all([dmi_uptrend, adx_uptrend, rsi_uptrend]) or all([not dmi_uptrend, adx_uptrend, not rsi_uptrend])
         bt = run_backtest(data_copy, results[symbol].copy(), days=days)
